@@ -1,5 +1,5 @@
-import { query } from "../../lib/db";
-import { distanceMeters } from "../../lib/geo";
+import { query } from "../../../../lib/db";
+import { distanceMeters } from "../../../../lib/geo";
 
 export async function POST(req) {
   const body = await req.json();

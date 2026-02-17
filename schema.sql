@@ -38,3 +38,25 @@ create unique index if not exists uniq_attendance_session_mac on attendance(sess
 
 -- Helper extension
 create extension if not exists pgcrypto;
+
+-- LHC Configuration table for per-classroom settings
+create table if not exists lhc_config (
+  id serial primary key,
+  classroom text unique not null,
+  geo_lat double precision,
+  geo_lon double precision,
+  geo_radius_m integer,
+  updated_at timestamptz default now()
+);
+
+-- Insert default configs for all LHCs
+insert into lhc_config (classroom, geo_lat, geo_lon, geo_radius_m) values
+('LHC001', 26.843983727627208, 75.56469440460206, 200),
+('LHC002', 26.843983727627208, 75.56469440460206, 200),
+('LHC003', 26.843983727627208, 75.56469440460206, 200),
+('LHC004', 26.843983727627208, 75.56469440460206, 200),
+('LHC101', 26.843983727627208, 75.56469440460206, 200),
+('LHC102', 26.843983727627208, 75.56469440460206, 200),
+('LHC103', 26.843983727627208, 75.56469440460206, 200),
+('LHC104', 26.843983727627208, 75.56469440460206, 200)
+on conflict (classroom) do nothing;

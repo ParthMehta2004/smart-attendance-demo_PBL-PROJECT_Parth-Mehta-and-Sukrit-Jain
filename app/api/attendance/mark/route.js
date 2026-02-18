@@ -21,13 +21,13 @@ export async function POST(req) {
 
   if (user.device_mac !== deviceMac) return new Response('ERROR: Device mismatch for this user', { status: 403, headers });
 
-  const lhcRes = await query('select * from lhc_config where name = $1', [classroom]);
+  const lhcRes = await query('select * from lhc_config where classroom = $1', [classroom]);
   if (!lhcRes.rows.length) return new Response('ERROR: Classroom configuration not found', { status: 404, headers });
   const lhc = lhcRes.rows[0];
 
-  const geoLat = parseFloat(lhc.latitude);
-  const geoLon = parseFloat(lhc.longitude);
-  const radius = parseFloat(lhc.radius_m || '200');
+  const geoLat = parseFloat(lhc.geo_lat);
+  const geoLon = parseFloat(lhc.geo_lon);
+  const radius = parseFloat(lhc.geo_radius_m || '200');
 
   const d = distanceMeters(geoLat, geoLon, lat, lon);
   if (d > radius) return new Response(`ERROR: Outside allowed location radius (${d.toFixed(2)}m from center)`, { status: 403, headers });

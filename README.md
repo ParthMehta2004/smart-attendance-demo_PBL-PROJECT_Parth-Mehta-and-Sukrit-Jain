@@ -7,9 +7,6 @@
 4. Set Environment Variables:
    - `DATABASE_URL` = your Postgres URL
    - `ADMIN_KEY` = any secret for professor actions
-   - `GEO_LAT` = 26.843983727627208
-   - `GEO_LON` = 75.56469440460206
-   - `GEO_RADIUS_M` = 200
 5. Deploy.
 
 ## Professor Page

@@ -6,6 +6,7 @@ const headers = { 'content-type': 'text/plain; charset=utf-8' };
 export async function POST(req) {
   const body = await req.json();
   const { regNo, deviceMac, lat, lon, classroom } = body || {};
+   console.log('Classroom received:', classroom);
 
   if (!regNo || !deviceMac || typeof lat !== 'number' || typeof lon !== 'number' || !classroom) {
     return new Response('ERROR: regNo, deviceMac, lat, lon, classroom required', { status: 400, headers });
@@ -21,7 +22,9 @@ export async function POST(req) {
 
   if (user.device_mac !== deviceMac) return new Response('ERROR: Device mismatch for this user', { status: 403, headers });
 
+   console.log('Querying lhc_config for classroom:', classroom);
   const lhcRes = await query('select * from lhc_config where classroom = $1', [classroom]);
+   console.log('lhc_config query result:', lhcRes.rows);
   if (!lhcRes.rows.length) return new Response('ERROR: Classroom configuration not found', { status: 404, headers });
   const lhc = lhcRes.rows[0];
 

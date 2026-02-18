@@ -23,7 +23,7 @@ export async function POST(req) {
   if (user.device_mac !== deviceMac) return new Response('ERROR: Device mismatch for this user', { status: 403, headers });
 
    console.log('Querying lhc_config for classroom:', classroom);
-  const lhcRes = await query('select * from lhc_config where classroom = $1', [classroom]);
+  const lhcRes = await query('select * from lhc_config where LOWER(TRIM(classroom)) = LOWER(TRIM($1))', [classroom]);
    console.log('lhc_config query result:', lhcRes.rows);
   if (!lhcRes.rows.length) return new Response('ERROR: Classroom configuration not found', { status: 404, headers });
   const lhc = lhcRes.rows[0];

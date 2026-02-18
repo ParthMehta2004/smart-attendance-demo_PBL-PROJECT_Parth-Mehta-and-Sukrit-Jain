@@ -19,10 +19,13 @@ export async function POST(req) {
 
   if (user.device_mac !== deviceMac) return new Response(JSON.stringify({ error: 'Device mismatch for this user' }), { status: 403 });
 
-  const geoLat = parseFloat(process.env.GEO_LAT || '26.843983727627208');
-  const geoLon = parseFloat(process.env.GEO_LON || '75.56469440460206');
-  const radius = parseFloat(process.env.GEO_RADIUS_M || '200');
-  const d = distanceMeters(geoLat, geoLon, lat, lon);
+   const lhcRes = await query('select * from lhc_config where name = $1', [classroom]);
+ if (!lhcRes.rows.length) return new Response(JSON.stringify({ error: 'Classroom configuration not found' }), { status: 404 });
+ const lhc = lhcRes.rows[0];
+ const geoLat = parseFloat(lhc.latitude);
+ const geoLon = parseFloat(lhc.longitude);
+ const radius = parseFloat(lhc.radius_m || '200');
+const d = distanceMeters(geoLat, geoLon, lat, lon);
 
   if (d > radius) return new Response(JSON.stringify({ error: 'Outside allowed location radius', distance: d }), { status: 403 });
 

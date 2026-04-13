@@ -35,11 +35,12 @@ export default function AdminLhcConfig() {
           geo_lat: parseFloat(row.geo_lat),
           geo_lon: parseFloat(row.geo_lon),
           geo_radius_m: parseInt(row.geo_radius_m, 10),
+          ble_threshold: parseInt(row.ble_threshold, 10), // ✅ NEW
         }),
       });
-      alert('Settings saved successfully');
+      alert('Saved');
     } catch (err) {
-      alert('Error saving settings');
+      alert('Error');
     } finally {
       setSaving(false);
     }
@@ -50,56 +51,61 @@ export default function AdminLhcConfig() {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Classroom Settings</h2>
-      <div className="overflow-x-auto">
-        <table className="border-collapse w-full text-sm border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border border-gray-300 px-2 py-2 text-left">Classroom</th>
-              <th className="border border-gray-300 px-2 py-2 text-left">Latitude</th>
-              <th className="border border-gray-300 px-2 py-2 text-left">Longitude</th>
-              <th className="border border-gray-300 px-2 py-2 text-left">Radius (meters)</th>
-              <th className="border border-gray-300 px-2 py-2 text-left">Action</th>
+      <table className="border w-full text-sm">
+        <thead>
+          <tr>
+            <th>Classroom</th>
+            <th>Lat</th>
+            <th>Lon</th>
+            <th>Radius</th>
+            <th>BLE RSSI</th> {/* ✅ NEW */}
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {rows.map((row, idx) => (
+            <tr key={row.classroom}>
+              <td>{row.classroom}</td>
+
+              <td>
+                <input
+                  value={row.geo_lat || ''}
+                  onChange={e => updateRow(idx, 'geo_lat', e.target.value)}
+                />
+              </td>
+
+              <td>
+                <input
+                  value={row.geo_lon || ''}
+                  onChange={e => updateRow(idx, 'geo_lon', e.target.value)}
+                />
+              </td>
+
+              <td>
+                <input
+                  value={row.geo_radius_m || ''}
+                  onChange={e => updateRow(idx, 'geo_radius_m', e.target.value)}
+                />
+              </td>
+
+              {/* ✅ NEW FIELD */}
+              <td>
+                <input
+                  value={row.ble_threshold ?? -90}
+                  onChange={e => updateRow(idx, 'ble_threshold', e.target.value)}
+                />
+              </td>
+
+              <td>
+                <button onClick={() => saveRow(row)} disabled={saving}>
+                  Save
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, idx) => (
-              <tr key={row.classroom} className="hover:bg-gray-50">
-                <td className="border border-gray-300 px-2 py-2 font-medium">{row.classroom}</td>
-                <td className="border border-gray-300 px-2 py-2">
-                  <input
-                    className="border border-gray-300 p-1 w-full rounded"
-                    value={row.geo_lat ?? ''}
-                    onChange={e => updateRow(idx, 'geo_lat', e.target.value)}
-                  />
-                </td>
-                <td className="border border-gray-300 px-2 py-2">
-                  <input
-                    className="border border-gray-300 p-1 w-full rounded"
-                    value={row.geo_lon ?? ''}
-                    onChange={e => updateRow(idx, 'geo_lon', e.target.value)}
-                  />
-                </td>
-                <td className="border border-gray-300 px-2 py-2">
-                  <input
-                    className="border border-gray-300 p-1 w-full rounded"
-                    value={row.geo_radius_m ?? ''}
-                    onChange={e => updateRow(idx, 'geo_radius_m', e.target.value)}
-                  />
-                </td>
-                <td className="border border-gray-300 px-2 py-2">
-                  <button
-                    className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 disabled:bg-gray-400"
-                    onClick={() => saveRow(row)}
-                    disabled={saving}
-                  >
-                    Save
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

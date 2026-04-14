@@ -35,77 +35,100 @@ export default function AdminLhcConfig() {
           geo_lat: parseFloat(row.geo_lat),
           geo_lon: parseFloat(row.geo_lon),
           geo_radius_m: parseInt(row.geo_radius_m, 10),
-          ble_threshold: parseInt(row.ble_threshold, 10), // ✅ NEW
+          ble_threshold: parseInt(row.ble_threshold, 10),
         }),
       });
-      alert('Saved');
+      alert('Saved ✅');
     } catch (err) {
-      alert('Error');
+      alert('Error ❌');
     } finally {
       setSaving(false);
     }
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="text-white p-6">Loading...</p>;
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Classroom Settings</h2>
-      <table className="border w-full text-sm">
-        <thead>
-          <tr>
-            <th>Classroom</th>
-            <th>Lat</th>
-            <th>Lon</th>
-            <th>Radius</th>
-            <th>BLE RSSI</th> {/* ✅ NEW */}
-            <th>Action</th>
-          </tr>
-        </thead>
+    <div className="min-h-screen bg-black text-white p-8">
 
-        <tbody>
-          {rows.map((row, idx) => (
-            <tr key={row.classroom}>
-              <td>{row.classroom}</td>
+      {/* HEADER */}
+      <h1 className="text-3xl font-bold mb-6 tracking-wide">
+        Classroom Settings
+      </h1>
 
-              <td>
-                <input
-                  value={row.geo_lat || ''}
-                  onChange={e => updateRow(idx, 'geo_lat', e.target.value)}
-                />
-              </td>
+      {/* TABLE */}
+      <div className="overflow-x-auto rounded-xl border border-gray-700">
+        <table className="w-full text-lg">
 
-              <td>
-                <input
-                  value={row.geo_lon || ''}
-                  onChange={e => updateRow(idx, 'geo_lon', e.target.value)}
-                />
-              </td>
-
-              <td>
-                <input
-                  value={row.geo_radius_m || ''}
-                  onChange={e => updateRow(idx, 'geo_radius_m', e.target.value)}
-                />
-              </td>
-
-              {/* ✅ NEW FIELD */}
-              <td>
-                <input
-                  value={row.ble_threshold ?? -90}
-                  onChange={e => updateRow(idx, 'ble_threshold', e.target.value)}
-                />
-              </td>
-
-              <td>
-                <button onClick={() => saveRow(row)} disabled={saving}>
-                  Save
-                </button>
-              </td>
+          <thead className="bg-gray-900 text-gray-300 uppercase text-sm">
+            <tr>
+              <th className="p-4 text-left">Classroom</th>
+              <th className="p-4">Latitude</th>
+              <th className="p-4">Longitude</th>
+              <th className="p-4">Radius (m)</th>
+              <th className="p-4">BLE (dBm)</th>
+              <th className="p-4">Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {rows.map((row, idx) => (
+              <tr
+                key={row.classroom}
+                className="border-t border-gray-800 hover:bg-gray-900 transition"
+              >
+
+                <td className="p-4 font-semibold">{row.classroom}</td>
+
+                <td className="p-4">
+                  <input
+                    className="bg-gray-800 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={row.geo_lat ?? ''}
+                    onChange={e => updateRow(idx, 'geo_lat', e.target.value)}
+                  />
+                </td>
+
+                <td className="p-4">
+                  <input
+                    className="bg-gray-800 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={row.geo_lon ?? ''}
+                    onChange={e => updateRow(idx, 'geo_lon', e.target.value)}
+                  />
+                </td>
+
+                <td className="p-4">
+                  <input
+                    className="bg-gray-800 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={row.geo_radius_m ?? ''}
+                    onChange={e => updateRow(idx, 'geo_radius_m', e.target.value)}
+                  />
+                </td>
+
+                <td className="p-4">
+                  <input
+                    className="bg-gray-800 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={row.ble_threshold ?? ''}
+                    onChange={e => updateRow(idx, 'ble_threshold', e.target.value)}
+                  />
+                </td>
+
+                <td className="p-4">
+                  <button
+                    className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition font-semibold"
+                    onClick={() => saveRow(row)}
+                    disabled={saving}
+                  >
+                    Save
+                  </button>
+                </td>
+
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
+      </div>
+
     </div>
   );
 }

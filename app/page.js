@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 
 const CLASSES = ["LHC 001", "LHC 002", "LHC003", "LHC004", "LHC101", "LHC102", "LHC103", "LHC104"];
@@ -21,12 +22,11 @@ export default function ProfessorPage() {
 
   async function closeSession() {
     if (!activeSession) return;
-    const res = await fetch('/api/sessions/close', {
+    await fetch('/api/sessions/close', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
       body: JSON.stringify({ sessionId: activeSession.id })
     });
-    const data = await res.json();
     setActiveSession(null);
     setLogs([]);
   }
@@ -51,37 +51,91 @@ export default function ProfessorPage() {
   }, [activeSession]);
 
   return (
-    <main className="p-6 max-w-3xl mx-auto font-sans">
-      <h1 className="text-2xl font-bold mb-4">Professor Panel</h1>
-      <label className="block mb-2">Admin Key</label>
-      <input value={adminKey} onChange={e=>setAdminKey(e.target.value)} className="border px-2 py-1 mb-4 w-full" placeholder="Enter admin key" />
-      <label className="block mb-2">Choose Classroom</label>
-      <select value={classroom} onChange={e=>setClassroom(e.target.value)} className="border px-2 py-1 mb-4 w-full">
-        {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
+    <div style={{ padding: "30px" }}>
+
+      <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
+        Professor Panel
+      </h1>
+
+      <input
+        placeholder="Admin Key"
+        value={adminKey}
+        onChange={e => setAdminKey(e.target.value)}
+        style={input}
+      />
+
+      <select
+        value={classroom}
+        onChange={e => setClassroom(e.target.value)}
+        style={input}
+      >
+        {CLASSES.map(c => <option key={c}>{c}</option>)}
       </select>
-      <div className="flex gap-2 mb-6">
-        <button onClick={openSession} className="border px-3 py-2">Activate Session</button>
-        <button onClick={closeSession} className="border px-3 py-2">Close Session</button>
+
+      <div style={{ marginTop: "10px" }}>
+        <button onClick={openSession} style={btnPrimary}>Activate</button>
+        <button onClick={closeSession} style={btnDanger}>Close</button>
       </div>
 
-      <div className="mb-4">
-        <span className="font-medium">Active Session:</span> {activeSession ? activeSession.id + ' (' + activeSession.classroom + ')' : 'None'}
-      </div>
+      <p style={{ marginTop: "15px", color: "#aaa" }}>
+        Active: {activeSession ? activeSession.classroom : "None"}
+      </p>
 
-      <h2 className="text-xl font-semibold mb-2">Live Attendance Logs</h2>
-      <table className="w-full border">
-        <thead><tr><th className="border px-2 py-1">Reg No</th><th className="border px-2 py-1">Name</th><th className="border px-2 py-1">Marked At</th></tr></thead>
+      <h2 style={{ marginTop: "30px" }}>Attendance Logs</h2>
+
+      <table style={table}>
+        <thead>
+          <tr>
+            <th>Reg No</th>
+            <th>Name</th>
+            <th>Time</th>
+          </tr>
+        </thead>
         <tbody>
-          {logs.map((r) => (
+          {logs.map(r => (
             <tr key={r.id}>
-              <td className="border px-2 py-1">{r.reg_no}</td>
-              <td className="border px-2 py-1">{r.name}</td>
-              <td className="border px-2 py-1">{new Date(r.marked_at).toLocaleString()}</td>
+              <td>{r.reg_no}</td>
+              <td>{r.name}</td>
+              <td>{new Date(r.marked_at).toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p className="text-sm mt-3">You can edit attendance after closing a session via the API (simple JSON endpoints).</p>
-    </main>
+
+    </div>
   );
 }
+
+const input = {
+  display: "block",
+  background: "#1a1a1a",
+  color: "white",
+  border: "1px solid #444",
+  padding: "10px",
+  marginBottom: "10px",
+  borderRadius: "6px",
+  width: "300px"
+};
+
+const btnPrimary = {
+  background: "#6d28d9",
+  color: "white",
+  border: "none",
+  padding: "10px 16px",
+  marginRight: "10px",
+  borderRadius: "6px"
+};
+
+const btnDanger = {
+  background: "#dc2626",
+  color: "white",
+  border: "none",
+  padding: "10px 16px",
+  borderRadius: "6px"
+};
+
+const table = {
+  width: "100%",
+  marginTop: "15px",
+  borderCollapse: "collapse"
+};

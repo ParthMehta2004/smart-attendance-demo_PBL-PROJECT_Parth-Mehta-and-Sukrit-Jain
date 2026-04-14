@@ -12,16 +12,54 @@ export default function AdminPage() {
   }
 
   return (
-    <div>
-      <div className="bg-blue-600 text-white p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-        <a href="/" className="bg-white text-blue-600 px-4 py-2 rounded font-medium hover:bg-gray-100">
+    <div style={styles.page}>
+
+      {/* HEADER */}
+      <div style={styles.header}>
+        <h1 style={styles.title}>Admin Dashboard</h1>
+
+        <a href="/" style={styles.backBtn}>
           Back to Main
         </a>
       </div>
-      <div className="p-6">
+
+      {/* CONTENT */}
+      <div style={styles.content}>
         <AdminLhcConfig />
       </div>
+
     </div>
   );
 }
+
+const styles = {
+  page: {
+    minHeight: '100vh',
+    backgroundColor: '#0b0b0b',
+    color: 'white',
+    fontFamily: 'Arial, sans-serif'
+  },
+  header: {
+    backgroundColor: '#111',
+    padding: '16px 24px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottom: '1px solid #222'
+  },
+  title: {
+    margin: 0,
+    fontSize: '24px'
+  },
+  backBtn: {
+    backgroundColor: '#6d28d9',
+    color: 'white',
+    padding: '8px 14px',
+    borderRadius: '6px',
+    textDecoration: 'none',
+    fontWeight: '500'
+  },
+  content: {
+    padding: '20px'
+  }
+};

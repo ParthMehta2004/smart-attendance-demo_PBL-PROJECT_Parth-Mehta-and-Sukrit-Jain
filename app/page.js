@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
-const CLASSES = ["LHC 001", "LHC 002", "LHC003", "LHC004", "LHC101", "LHC102", "LHC103", "LHC104"];
+const CLASSES = [
+  "LHC 001", "LHC 002", "LHC 003", "LHC 004",
+  "LHC 101", "LHC 102", "LHC 103", "LHC 104"
+];
 
 export default function ProfessorPage() {
   const [classroom, setClassroom] = useState(CLASSES[0]);
@@ -13,20 +16,29 @@ export default function ProfessorPage() {
   async function openSession() {
     const res = await fetch('/api/sessions/open', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-key': adminKey
+      },
       body: JSON.stringify({ classroom })
     });
+
     const data = await res.json();
     setActiveSession(data.session);
   }
 
   async function closeSession() {
     if (!activeSession) return;
+
     await fetch('/api/sessions/close', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-key': adminKey
+      },
       body: JSON.stringify({ sessionId: activeSession.id })
     });
+
     setActiveSession(null);
     setLogs([]);
   }
@@ -39,12 +51,16 @@ export default function ProfessorPage() {
 
   async function fetchLogs() {
     if (!activeSession) return;
+
     const res = await fetch('/api/attendance?sessionId=' + activeSession.id);
     const data = await res.json();
     setLogs(data.rows || []);
   }
 
-  useEffect(() => { fetchActive(); }, []);
+  useEffect(() => {
+    fetchActive();
+  }, []);
+
   useEffect(() => {
     const t = setInterval(fetchLogs, 3000);
     return () => clearInterval(t);
@@ -53,12 +69,13 @@ export default function ProfessorPage() {
   return (
     <div style={{ padding: "30px" }}>
 
-      <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
+      <h1 style={{ fontSize: "30px", marginBottom: "20px" }}>
         Professor Panel
       </h1>
 
+      {/* INPUTS */}
       <input
-        placeholder="Admin Key"
+        placeholder="Enter Admin Key"
         value={adminKey}
         onChange={e => setAdminKey(e.target.value)}
         style={input}
@@ -72,35 +89,51 @@ export default function ProfessorPage() {
         {CLASSES.map(c => <option key={c}>{c}</option>)}
       </select>
 
+      {/* BUTTONS */}
       <div style={{ marginTop: "10px" }}>
-        <button onClick={openSession} style={btnPrimary}>Activate</button>
-        <button onClick={closeSession} style={btnDanger}>Close</button>
+        <button onClick={openSession} style={btnPrimary}>
+          Activate Session
+        </button>
+
+        <button onClick={closeSession} style={btnDanger}>
+          Close Session
+        </button>
       </div>
 
+      {/* STATUS */}
       <p style={{ marginTop: "15px", color: "#aaa" }}>
-        Active: {activeSession ? activeSession.classroom : "None"}
+        Active Session:{" "}
+        <span style={{ color: "white" }}>
+          {activeSession ? `${activeSession.classroom}` : "None"}
+        </span>
       </p>
 
+      {/* TABLE */}
       <h2 style={{ marginTop: "30px" }}>Attendance Logs</h2>
 
-      <table style={table}>
-        <thead>
-          <tr>
-            <th>Reg No</th>
-            <th>Name</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {logs.map(r => (
-            <tr key={r.id}>
-              <td>{r.reg_no}</td>
-              <td>{r.name}</td>
-              <td>{new Date(r.marked_at).toLocaleString()}</td>
+      <div style={tableWrapper}>
+        <table style={table}>
+          <thead>
+            <tr>
+              <th style={th}>Reg No</th>
+              <th style={th}>Name</th>
+              <th style={th}>Time</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {logs.map((r, i) => (
+              <tr key={r.id} style={i % 2 === 0 ? row : rowAlt}>
+                <td style={td}>{r.reg_no}</td>
+                <td style={td}>{r.name}</td>
+                <td style={td}>
+                  {new Date(r.marked_at).toLocaleString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
     </div>
   );
@@ -123,7 +156,8 @@ const btnPrimary = {
   border: "none",
   padding: "10px 16px",
   marginRight: "10px",
-  borderRadius: "6px"
+  borderRadius: "6px",
+  cursor: "pointer"
 };
 
 const btnDanger = {
@@ -131,11 +165,39 @@ const btnDanger = {
   color: "white",
   border: "none",
   padding: "10px 16px",
-  borderRadius: "6px"
+  borderRadius: "6px",
+  cursor: "pointer"
+};
+
+const tableWrapper = {
+  marginTop: "20px",
+  border: "1px solid #222",
+  borderRadius: "10px",
+  overflow: "hidden"
 };
 
 const table = {
   width: "100%",
-  marginTop: "15px",
   borderCollapse: "collapse"
+};
+
+const th = {
+  textAlign: "left",
+  padding: "12px",
+  backgroundColor: "#111",
+  color: "#aaa",
+  fontSize: "14px"
+};
+
+const td = {
+  padding: "12px",
+  borderTop: "1px solid #222"
+};
+
+const row = {
+  backgroundColor: "#0f0f0f"
+};
+
+const rowAlt = {
+  backgroundColor: "#141414"
 };
